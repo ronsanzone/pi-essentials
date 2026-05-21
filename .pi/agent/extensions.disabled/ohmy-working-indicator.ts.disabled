@@ -1,0 +1,24 @@
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+
+export default function ohmyWorkingIndicator(pi: ExtensionAPI) {
+  pi.on("session_start", async (_event, ctx) => {
+    const theme = ctx.ui.theme;
+    ctx.ui.setWorkingIndicator({
+      frames: [
+        theme.fg("dim", "·"),
+        theme.fg("muted", "•"),
+        theme.fg("accent", "●"),
+        theme.fg("muted", "•"),
+      ],
+      intervalMs: 120,
+    });
+  });
+
+  pi.registerCommand("default-working-indicator", {
+    description: "Restore Pi's default working indicator for this session",
+    handler: async (_args, ctx) => {
+      ctx.ui.setWorkingIndicator();
+      ctx.ui.notify("Default working indicator restored for this session", "info");
+    },
+  });
+}

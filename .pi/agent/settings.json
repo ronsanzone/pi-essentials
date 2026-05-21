@@ -1,0 +1,13 @@
+{
+  "lastChangelogVersion": "0.75.4",
+  "defaultThinkingLevel": "low",
+  "theme": "catppuccin-macchiato",
+  "skills": [
+    "~/.pi/agent/skills",
+    "~/.claude/skills"
+  ],
+  "packages": [
+    "npm:pi-subagents",
+    "npm:pi-mcp-adapter"
+  ]
+}

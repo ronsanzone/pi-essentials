@@ -1,0 +1,11 @@
+# dependencies installed by install.sh
+.pi/agent/npm/node_modules/
+
+# local/runtime files should not be committed if accidentally copied
+.pi/agent/auth.json
+.pi/agent/mcp-oauth/
+.pi/agent/mcp-cache.json
+.pi/agent/mcp-onboarding.json
+.pi/agent/sessions/
+.pi/agent/run-history.jsonl
+*.bak-*

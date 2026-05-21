@@ -1,0 +1,29 @@
+# Pi user instructions
+
+## Subagents
+
+`pi-subagents` is installed. Use the `subagent` tool when a request benefits from independent fresh context, codebase exploration, implementation delegation, or review.
+
+Generic compatibility mappings:
+
+- `Agent(prompt)` means run `subagent({ agent: "agent", task: prompt, context: "fresh" })`.
+- `Explore(prompt)` means run `subagent({ agent: "explore", task: prompt, context: "fresh" })`.
+- "fresh subagent" means `context: "fresh"`.
+
+Prefer these local agents for focused context-management work:
+
+- `codebase-locator`: locate files by feature/topic; paths only.
+- `codebase-analyzer`: durable how-it-works writeup with file/line citations.
+- `codebase-pattern-finder`: find ready-to-copy code patterns and matching tests.
+- `web-search-researcher`: current web/docs research when available tools support it.
+- `explore`: generic no-edit repository exploration.
+- `agent`: generic fresh-context task execution.
+
+For deep-work implementation workflows, follow the `deep-work-pi-adapter` skill mapping:
+
+- implementer subagent → `implementer`
+- spec reviewer subagent → `spec-reviewer`
+- code quality reviewer subagent → `code-quality-reviewer`
+- default all deep-work subagents to fresh context unless explicitly told otherwise.
+
+References in shared Claude/Pi skills to Claude Code tools such as `TaskCreate`, `TaskUpdate`, or `TaskList` are harness examples. In Pi, use Pi-native todo/task tracking and `subagent` while preserving the described workflow.
