@@ -9,3 +9,5 @@
 .pi/agent/sessions/
 .pi/agent/run-history.jsonl
 *.bak-*
+__pycache__/
+*.py[cod]
