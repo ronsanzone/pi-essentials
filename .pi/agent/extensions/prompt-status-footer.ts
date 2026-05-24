@@ -20,6 +20,25 @@ function stripAnsi(s: string): string {
   return s.replace(/\x1b\[[0-9;]*m/g, "");
 }
 
+function centeredFooterLine(left: string, center: string, right: string, width: number): string {
+  const centerWidth = visibleWidth(center);
+  const rightWidth = visibleWidth(right);
+  const dimSepWidth = 3;
+
+  let availableForLeft = width - rightWidth - centerWidth - dimSepWidth * 2;
+  if (availableForLeft < 12) availableForLeft = Math.max(0, width - rightWidth - dimSepWidth);
+
+  left = truncateToWidth(left, availableForLeft, "…");
+
+  const leftWidth = visibleWidth(left);
+  const targetCenterStart = Math.max(leftWidth + dimSepWidth, Math.floor((width - centerWidth) / 2));
+  const leftPad = Math.max(dimSepWidth, targetCenterStart - leftWidth);
+  const usedBeforeRight = leftWidth + leftPad + centerWidth;
+  const rightPad = Math.max(dimSepWidth, width - usedBeforeRight - rightWidth);
+
+  return truncateToWidth(left + " ".repeat(leftPad) + center + " ".repeat(rightPad) + right, width, "…");
+}
+
 export default function promptStatusFooter(pi: ExtensionAPI) {
   pi.on("session_start", async (_event, ctx) => {
     ctx.ui.setFooter((tui, theme, footerData) => {
@@ -71,16 +90,25 @@ export default function promptStatusFooter(pi: ExtensionAPI) {
           if (cacheRead || cacheWrite) rightParts.push(theme.fg("dim", `R${fmtTokens(cacheRead)} W${fmtTokens(cacheWrite)}`));
           if (cost) rightParts.push(theme.fg("dim", `$${cost.toFixed(3)}`));
 
+          const extensionStatuses = footerData.getExtensionStatuses();
+          const primaryAlert = extensionStatuses.get("primary-alert");
+
           let left = leftParts.join(pathSep);
           const right = rightParts.join(dotSep);
-          let availableForLeft = width - visibleWidth(right) - visibleWidth(dimSep);
-          if (availableForLeft < 12) availableForLeft = Math.max(0, width - 2);
-          left = truncateToWidth(left, availableForLeft, theme.fg("dim", "…"));
+          let primary: string;
+          if (primaryAlert && stripAnsi(primaryAlert).trim()) {
+            primary = centeredFooterLine(left, primaryAlert, right, width);
+          } else {
+            let availableForLeft = width - visibleWidth(right) - visibleWidth(dimSep);
+            if (availableForLeft < 12) availableForLeft = Math.max(0, width - 2);
+            left = truncateToWidth(left, availableForLeft, theme.fg("dim", "…"));
 
-          const pad = " ".repeat(Math.max(1, width - visibleWidth(left) - visibleWidth(right)));
-          const primary = truncateToWidth(left + pad + right, width, theme.fg("dim", "…"));
+            const pad = " ".repeat(Math.max(1, width - visibleWidth(left) - visibleWidth(right)));
+            primary = truncateToWidth(left + pad + right, width, theme.fg("dim", "…"));
+          }
 
-          const statuses = Array.from(footerData.getExtensionStatuses().entries())
+          const statuses = Array.from(extensionStatuses.entries())
+            .filter(([key]) => key !== "primary-alert")
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([key, value]) => {
               const clean = stripAnsi(value).trim();
