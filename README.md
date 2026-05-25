@@ -1,32 +1,30 @@
 # pi-essentials
 
-Pi- and GPT-optimized skills, agents, extensions, themes, model config, and workflow assets.
+Pi- skills, agents, extensions, themes, model config, and workflow assets.
 
-This package owns non-secret Pi configuration via symlinks into `~/.pi/agent`. Runtime state, credentials, and MongoDB/Grove-specific provider configuration remain outside this package.
+This package owns Pi configuration via symlinks into `~/.pi/agent`. 
 
 ## Layout
 
 ```text
-.pi/agent/
-  AGENTS.md
-  agents/                      # custom Pi subagents
-  extensions/                  # Pi extensions
-  extensions.disabled/         # disabled extensions kept for reference
-  npm/                         # package.json for Pi npm packages
-  packages/                    # local Pi package forks
-  scripts/                     # helper scripts
-  settings.json                # Pi user settings
-  skills/                      # Pi skills
-    _shared/
-      dw-setup.sh              # resolves repo/topic/artifact directory
-    deep-work-pi-adapter/
-    dw-01-research-questions/  # Phase 1
-    dw-02-research/            # Phase 2 + bias-firewall extractor
-    dw-03-design-discussion/   # Phase 3
-    dw-04-outline/             # Phase 4
-    dw-05-plan/                # Phase 5 + co-located plan-review prompt
-    dw-06-implement/           # Adaptive implementation worker
-  themes/
+agent/
+  AGENTS.md                    # installed as ~/.pi/agent/AGENTS.md
+  settings.json                # installed as ~/.pi/agent/settings.json
+agents/                        # custom Pi subagents
+extensions/                    # Pi extensions; overlaid into ~/.pi/agent/extensions
+extensions.disabled/           # disabled extensions kept for reference
+npm/                           # package.json for Pi npm packages
+scripts/                       # helper scripts; overlaid into ~/.pi/agent/scripts
+skills/                        # Pi skills
+  _shared/
+    dw-setup.sh                # resolves repo/topic/artifact directory
+  dw-01-research-questions/    # Phase 1
+  dw-02-research/              # Phase 2 + bias-firewall extractor
+  dw-03-design-discussion/     # Phase 3
+  dw-04-outline/               # Phase 4
+  dw-05-plan/                  # Phase 5 + co-located plan-review prompt
+  dw-06-implement/             # Adaptive implementation worker
+themes/
 install.sh                     # symlink installer
 ```
 
@@ -52,7 +50,7 @@ The script:
 
 1. backs up existing managed paths to `~/.pi/agent.backups/<timestamp>/`;
 2. replaces them with symlinks into this repo;
-3. runs `npm install` in `.pi/agent/npm`.
+3. runs `npm install` in `npm/`.
 
 Managed paths:
 
@@ -66,14 +64,7 @@ Managed paths:
 ~/.pi/agent/skills
 ~/.pi/agent/settings.json
 ~/.pi/agent/npm
-~/.pi/agent/packages
 ```
-
-## Local package forks
-
-### `pi-subagents-essential`
-
-`pi-subagents-essential` is a local fork of `pi-subagents` with Agent Skills-safe discovery. It prevents `SKILL.md` files and Claude/Agent Skills marketplace plugin trees from being listed as executable subagents. See `docs/pi-subagents-essential.md`.
 
 ## Context debugging
 
@@ -114,7 +105,7 @@ The deep-work skills are **phase workers**, not an end-to-end pipeline controlle
 
 Each deep-work phase should:
 
-1. Resolve `REPO`, `TOPIC_SLUG`, and `ARTIFACT_DIR` with `.pi/agent/skills/_shared/dw-setup.sh`.
+1. Resolve `REPO`, `TOPIC_SLUG`, and `ARTIFACT_DIR` with the installed runtime helper at `~/.pi/agent/skills/_shared/dw-setup.sh` (source: `skills/_shared/dw-setup.sh`).
 2. Validate prerequisite artifacts.
 3. Read only the artifacts allowed for that phase.
 4. Write its output artifact.

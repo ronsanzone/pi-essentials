@@ -5,15 +5,9 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SRC="$ROOT/.pi/agent"
 DEST="$HOME/.pi/agent"
 BACKUP_ROOT="$HOME/.pi/agent.backups"
 STAMP="$(date +%Y%m%d-%H%M%S)"
-
-if [[ ! -d "$SRC" ]]; then
-  echo "ERROR: package config not found at $SRC" >&2
-  exit 1
-fi
 
 mkdir -p "$DEST" "$BACKUP_ROOT"
 
@@ -25,13 +19,14 @@ backup_existing() {
   mv "$dest" "$backup_dir/$name"
 }
 
-link_item() {
-  local name="$1"
-  local src="$SRC/$name"
-  local dest="$DEST/$name"
+link_path() {
+  local src_rel="$1"
+  local dest_rel="$2"
+  local src="$ROOT/$src_rel"
+  local dest="$DEST/$dest_rel"
 
   if [[ ! -e "$src" && ! -L "$src" ]]; then
-    echo "skip missing $name"
+    echo "skip missing $src_rel"
     return 0
   fi
 
@@ -45,7 +40,7 @@ link_item() {
     echo "remove existing symlink $dest -> $target"
     rm "$dest"
   elif [[ -e "$dest" ]]; then
-    backup_existing "$dest" "$name"
+    backup_existing "$dest" "${dest_rel//\//-}"
   fi
 
   mkdir -p "$(dirname "$dest")"
@@ -54,23 +49,26 @@ link_item() {
 }
 
 link_overlay_dir_files() {
-  local name="$1"
-  local src_dir="$SRC/$name"
-  local dest_dir="$DEST/$name"
+  local src_rel="$1"
+  local dest_rel="$2"
+  local src_dir="$ROOT/$src_rel"
+  local dest_dir="$DEST/$dest_rel"
 
   [[ -d "$src_dir" ]] || return 0
 
   if [[ -L "$dest_dir" ]]; then
-    echo "remove existing $name directory symlink $dest_dir -> $(readlink "$dest_dir")"
+    echo "remove existing $dest_rel directory symlink $dest_dir -> $(readlink "$dest_dir")"
     rm "$dest_dir"
   elif [[ -e "$dest_dir" && ! -d "$dest_dir" ]]; then
-    backup_existing "$dest_dir" "$name"
+    backup_existing "$dest_dir" "${dest_rel//\//-}"
   fi
   mkdir -p "$dest_dir"
 
+  shopt -s nullglob
   for src in "$src_dir"/*; do
-    [[ -e "$src" ]] || continue
-    local dest="$dest_dir/$(basename "$src")"
+    local base dest
+    base="$(basename "$src")"
+    dest="$dest_dir/$base"
     if [[ -L "$dest" ]]; then
       local target
       target="$(readlink "$dest")"
@@ -81,38 +79,35 @@ link_overlay_dir_files() {
       echo "remove existing symlink $dest -> $target"
       rm "$dest"
     elif [[ -e "$dest" ]]; then
-      backup_existing "$dest" "$name-$(basename "$src")"
+      backup_existing "$dest" "${dest_rel//\//-}-$base"
     fi
     ln -s "$src" "$dest"
     echo "link $dest -> $src"
   done
+  shopt -u nullglob
 }
 
 # Whole-path assets managed by this package.
-for item in AGENTS.md agents extensions.disabled themes skills settings.json npm packages; do
-  link_item "$item"
-done
+link_path "agent/AGENTS.md" "AGENTS.md"
+link_path "agent/settings.json" "settings.json"
+link_path "agents" "agents"
+link_path "extensions.disabled" "extensions.disabled"
+link_path "themes" "themes"
+link_path "skills" "skills"
+link_path "npm" "npm"
 
 # Overlay directories: other packages may add their own extension/script symlinks here.
-link_overlay_dir_files extensions
-link_overlay_dir_files scripts
+link_overlay_dir_files "extensions" "extensions"
+link_overlay_dir_files "scripts" "scripts"
 
-# Install npm dependencies into package-owned npm dirs, if npm is available.
+# Install npm dependencies into package-owned npm dir, if npm is available.
+NPM_DIR="$ROOT/npm"
 if command -v npm >/dev/null 2>&1; then
-  if [[ -f "$SRC/npm/package.json" ]]; then
-    echo "install npm dependencies in $SRC/npm"
-    (cd "$SRC/npm" && npm install)
+  if [[ -f "$NPM_DIR/package.json" ]]; then
+    echo "install npm dependencies in $NPM_DIR"
+    (cd "$NPM_DIR" && npm install)
   else
-    echo "skip npm install for $SRC/npm (package.json missing)"
-  fi
-
-  if [[ -d "$SRC/packages" ]]; then
-    for package_json in "$SRC"/packages/*/package.json; do
-      [[ -f "$package_json" ]] || continue
-      package_dir="$(dirname "$package_json")"
-      echo "install npm dependencies in $package_dir"
-      (cd "$package_dir" && npm install)
-    done
+    echo "skip npm install for $NPM_DIR (package.json missing)"
   fi
 else
   echo "skip npm install (npm unavailable)"
@@ -123,13 +118,13 @@ cat <<MSG
 pi-essentials installed.
 
 Managed links now point from:
-  $DEST/{AGENTS.md,agents,extensions.disabled,themes,skills,settings.json,npm,packages}
+  $DEST/{AGENTS.md,agents,extensions.disabled,themes,skills,settings.json,npm}
 
 Overlay links are installed into:
   $DEST/{extensions,scripts}
 
 to package files under:
-  $SRC
+  $ROOT/{agent,agents,extensions,extensions.disabled,themes,skills,npm,scripts}
 
 Runtime/secrets intentionally not managed:
   auth.json, mcp-oauth/, mcp-cache.json, mcp-onboarding.json, sessions/, run-history.jsonl

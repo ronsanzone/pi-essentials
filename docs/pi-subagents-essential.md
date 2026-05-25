@@ -1,12 +1,15 @@
 # pi-subagents-essential
 
-`pi-subagents-essential` is the `pi-essentials` local fork of `pi-subagents`.
+`pi-subagents-essential` is the fork of `pi-subagents` used by this `pi-essentials` config.
 
-## Upstream base
+## Source location
 
 - Upstream package: `pi-subagents`
-- Forked from installed version: `0.25.0`
-- Local package path: `.pi/agent/packages/pi-subagents-essential`
+- Fork repo: `git@github.com:ronsanzone/pi-subagents-essentials.git`
+- Development checkout: `~/code/pi-subagents-essentials`
+- Loaded by this repo through `agent/settings.json` as a Git Pi package pinned to `main` after installation to `~/.pi/agent/settings.json`.
+
+The fork source is intentionally **not vendored in this repo**. Keep subagent package changes in `~/code/pi-subagents-essentials`, push them to `origin/main`, and let Pi install/update the Git package.
 
 ## Why this fork exists
 
@@ -19,9 +22,9 @@ The upstream package discovers project subagents by recursively scanning the leg
 
 Those files are skills, not subagents. Listing or launching them as subagents is confusing and can bloat/blur orchestration behavior.
 
-## Local behavior
+## Fork behavior
 
-This fork keeps subagent functionality but makes discovery Agent Skills-safe:
+The fork keeps subagent functionality but makes discovery Agent Skills-safe:
 
 - `SKILL.md` is never treated as a subagent.
 - `.agents/skills/**` is not treated as subagents.
@@ -38,19 +41,26 @@ Real subagents should live in explicit agent locations such as:
 
 ## Validation
 
-Run:
+Run in the fork checkout:
 
 ```bash
-cd ~/.pi/agent/packages/pi-subagents-essential
+cd ~/code/pi-subagents-essentials
+node --experimental-strip-types --test test/unit/agent-frontmatter.test.ts --test-name-pattern "Agent Skills"
+```
+
+For a full test run, install the fork's dev dependencies first:
+
+```bash
+cd ~/code/pi-subagents-essentials
+npm install
 npm test
 ```
 
-The regression test verifies that MMS-style Agent Skills trees are not discovered as subagents while real `.agents/agents/*.md` files are.
-
 ## Updating from upstream
 
-1. Copy upstream `pi-subagents` into `.pi/agent/packages/pi-subagents-essential`.
-2. Restore the local package name/version in `package.json`.
-3. Reapply the Agent Skills-safe discovery patch in `src/agents/agents.ts`.
-4. Run `npm test` in the fork.
-5. In an MMS Pi session, run `subagent({ action: "list" })` and confirm marketplace skills are absent.
+1. Pull/rebase upstream changes in `~/code/pi-subagents-essentials`.
+2. Reapply or verify the Agent Skills-safe discovery patch in `src/agents/agents.ts`.
+3. Run the validation test above.
+4. Commit and push the fork changes to `origin/main`.
+5. In this repo, run `pi update --extensions` if you need to reconcile the installed Git package immediately.
+6. In a Pi session, run `subagent({ action: "list" })` and confirm marketplace skills are absent.

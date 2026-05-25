@@ -1,5 +1,5 @@
 # dependencies installed by install.sh
-.pi/agent/npm/node_modules/
+npm/node_modules/
 
 # local/runtime files should not be committed if accidentally copied
 .pi/agent/auth.json

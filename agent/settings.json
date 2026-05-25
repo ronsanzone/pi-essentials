@@ -1,0 +1,16 @@
+{
+  "lastChangelogVersion": "0.75.5",
+  "defaultThinkingLevel": "low",
+  "theme": "catppuccin-macchiato",
+  "skills": [
+    "~/.pi/agent/skills",
+    "~/.claude/skills"
+  ],
+  "packages": [
+    "git:git@github.com:ronsanzone/pi-subagents-essentials.git@main",
+    "npm:pi-mcp-adapter",
+    "npm:pi-cursor-sdk"
+  ],
+  "defaultProvider": "grove-openai",
+  "defaultModel": "gpt-5.5"
+}
