@@ -11,3 +11,4 @@
 *.bak-*
 __pycache__/
 *.py[cod]
+.pi/agent/packages/*/node_modules/

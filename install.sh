@@ -89,7 +89,7 @@ link_overlay_dir_files() {
 }
 
 # Whole-path assets managed by this package.
-for item in AGENTS.md agents extensions.disabled themes skills settings.json npm; do
+for item in AGENTS.md agents extensions.disabled themes skills settings.json npm packages; do
   link_item "$item"
 done
 
@@ -97,12 +97,25 @@ done
 link_overlay_dir_files extensions
 link_overlay_dir_files scripts
 
-# Install npm dependencies into the package-owned npm dir, if npm is available.
-if command -v npm >/dev/null 2>&1 && [[ -f "$SRC/npm/package.json" ]]; then
-  echo "install npm dependencies in $SRC/npm"
-  (cd "$SRC/npm" && npm install)
+# Install npm dependencies into package-owned npm dirs, if npm is available.
+if command -v npm >/dev/null 2>&1; then
+  if [[ -f "$SRC/npm/package.json" ]]; then
+    echo "install npm dependencies in $SRC/npm"
+    (cd "$SRC/npm" && npm install)
+  else
+    echo "skip npm install for $SRC/npm (package.json missing)"
+  fi
+
+  if [[ -d "$SRC/packages" ]]; then
+    for package_json in "$SRC"/packages/*/package.json; do
+      [[ -f "$package_json" ]] || continue
+      package_dir="$(dirname "$package_json")"
+      echo "install npm dependencies in $package_dir"
+      (cd "$package_dir" && npm install)
+    done
+  fi
 else
-  echo "skip npm install (npm unavailable or package.json missing)"
+  echo "skip npm install (npm unavailable)"
 fi
 
 cat <<MSG
@@ -110,7 +123,7 @@ cat <<MSG
 pi-essentials installed.
 
 Managed links now point from:
-  $DEST/{AGENTS.md,agents,extensions.disabled,themes,skills,settings.json,npm}
+  $DEST/{AGENTS.md,agents,extensions.disabled,themes,skills,settings.json,npm,packages}
 
 Overlay links are installed into:
   $DEST/{extensions,scripts}

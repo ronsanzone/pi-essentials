@@ -13,6 +13,7 @@ This package owns non-secret Pi configuration via symlinks into `~/.pi/agent`. R
   extensions/                  # Pi extensions
   extensions.disabled/         # disabled extensions kept for reference
   npm/                         # package.json for Pi npm packages
+  packages/                    # local Pi package forks
   scripts/                     # helper scripts
   settings.json                # Pi user settings
   skills/                      # Pi skills
@@ -65,7 +66,28 @@ Managed paths:
 ~/.pi/agent/skills
 ~/.pi/agent/settings.json
 ~/.pi/agent/npm
+~/.pi/agent/packages
 ```
+
+## Local package forks
+
+### `pi-subagents-essential`
+
+`pi-subagents-essential` is a local fork of `pi-subagents` with Agent Skills-safe discovery. It prevents `SKILL.md` files and Claude/Agent Skills marketplace plugin trees from being listed as executable subagents. See `docs/pi-subagents-essential.md`.
+
+## Context debugging
+
+The `context-debug` extension captures Pi system prompt, message context, and provider payload diagnostics on demand.
+
+```text
+/context-debug status
+/context-debug on
+/context-debug off
+/context-debug once
+/context-debug report
+```
+
+Reports are written outside repos by default under `~/.pi/agent/context-debug/runs/`.
 
 ## Deep-work phase scope
 

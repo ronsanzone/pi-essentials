@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.75.4",
+  "lastChangelogVersion": "0.75.5",
   "defaultThinkingLevel": "low",
   "theme": "catppuccin-macchiato",
   "skills": [
@@ -7,8 +7,9 @@
     "~/.claude/skills"
   ],
   "packages": [
-    "npm:pi-subagents",
-    "npm:pi-mcp-adapter"
+    "./packages/pi-subagents-essential",
+    "npm:pi-mcp-adapter",
+    "npm:pi-cursor-sdk"
   ],
   "defaultProvider": "grove-openai",
   "defaultModel": "gpt-5.5"
