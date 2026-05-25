@@ -3,7 +3,6 @@
   "private": true,
   "dependencies": {
     "pi-cursor-sdk": "^0.1.18",
-    "pi-mcp-adapter": "^2.7.0",
-    "pi-subagents": "^0.25.0"
+    "pi-mcp-adapter": "^2.7.0"
   }
 }
