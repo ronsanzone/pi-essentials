@@ -1,6 +1,7 @@
 ---
 name: dw-06-implement
 description: "Use when deep-work Phase 5 plan is complete. Executes `05-plan.md` using Pi-native markdown progress, adaptive review modes, and optional fresh subagents."
+disable-model-invocation: true
 ---
 
 # Phase 6: Implement for Pi/GPT

@@ -1,6 +1,7 @@
 ---
 name: dw-05-plan
 description: "Phase 5 deep-work worker. Expands the structure outline into an implementation-ready, risk-tagged plan with markdown execution progress."
+disable-model-invocation: true
 ---
 
 # Phase 5: Implementation Plan

@@ -1,6 +1,7 @@
 ---
 name: dw-03-design-discussion
 description: "Phase 3 deep-work worker. Reintroduces the ticket after research is locked, identifies design questions, recommends options, and records decisions."
+disable-model-invocation: true
 ---
 
 # Phase 3: Design Discussion

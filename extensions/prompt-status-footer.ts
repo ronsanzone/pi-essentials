@@ -13,7 +13,7 @@ function fmtTokens(n: number): string {
   if (n < 1_000) return String(Math.round(n));
   if (n < 10_000) return `${(n / 1_000).toFixed(1)}k`;
   if (n < 1_000_000) return `${Math.round(n / 1_000)}k`;
-  return `${(n / 1_000_000).toFixed(1)}M`;
+  return `${(n / 1_000_000).toFixed(1)}m`;
 }
 
 function stripAnsi(s: string): string {
@@ -71,9 +71,10 @@ export default function promptStatusFooter(pi: ExtensionAPI) {
           const provider = ctx.model?.provider;
           const thinking = ctx.model?.reasoning ? pi.getThinkingLevel() : undefined;
           const contextUsage = ctx.getContextUsage();
+          const contextTokens = contextUsage?.tokens ?? 0;
           const contextWindow = contextUsage?.contextWindow ?? ctx.model?.contextWindow ?? 0;
-          const contextPercent = contextUsage?.percent;
-          const contextPct = contextPercent === null || contextPercent === undefined ? "?" : contextPercent.toFixed(1);
+          const contextPercent = contextUsage?.percent ?? (contextWindow > 0 ? (contextTokens / contextWindow) * 100 : undefined);
+          const contextPct = contextPercent === null || contextPercent === undefined ? "?" : contextPercent.toFixed(0);
 
           const dimSep = theme.fg("dim", "  │  ");
           const dotSep = theme.fg("dim", " · ");
@@ -85,7 +86,7 @@ export default function promptStatusFooter(pi: ExtensionAPI) {
           const rightParts = [theme.fg("customMessageLabel", `◉ ${modelName}`)];
           if (provider) rightParts.push(theme.fg("dim", provider));
           if (thinking) rightParts.push(theme.fg("warning", `‹ ${thinking} ›`));
-          rightParts.push(theme.fg("dim", `⌘ ${contextPct}%/${fmtTokens(contextWindow)}`));
+          rightParts.push(theme.fg("dim", `⌘ ${fmtTokens(contextTokens)}/${fmtTokens(contextWindow)} (${contextPct}%)`));
           if (input || output) rightParts.push(theme.fg("dim", `↑${fmtTokens(input)} ↓${fmtTokens(output)}`));
           if (cacheRead || cacheWrite) rightParts.push(theme.fg("dim", `R${fmtTokens(cacheRead)} W${fmtTokens(cacheWrite)}`));
           if (cost) rightParts.push(theme.fg("dim", `$${cost.toFixed(3)}`));

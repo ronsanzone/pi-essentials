@@ -1,6 +1,7 @@
 ---
 name: dw-04-outline
 description: "Phase 4 deep-work worker. Converts completed design decisions into a concrete, risk-tagged change outline for planning."
+disable-model-invocation: true
 ---
 
 # Phase 4: Structure Outline

@@ -1,6 +1,7 @@
 ---
 name: dw-02-research
 description: "Phase 2 deep-work worker. Objectively answers research questions with a strict bias firewall: no original prompt, no solutioning."
+disable-model-invocation: true
 ---
 
 # Phase 2: Research

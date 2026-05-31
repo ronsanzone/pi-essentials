@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.75.5",
+  "lastChangelogVersion": "0.78.0",
   "defaultThinkingLevel": "low",
-  "theme": "catppuccin-macchiato",
+  "theme": "redstone-portal-dark",
   "skills": [
     "~/.pi/agent/skills",
     "~/.claude/skills"
@@ -9,7 +9,8 @@
   "packages": [
     "git:git@github.com:ronsanzone/pi-subagents-essentials.git@main",
     "npm:pi-mcp-adapter",
-    "npm:pi-cursor-sdk"
+    "npm:pi-cursor-sdk",
+    "npm:@plannotator/pi-extension"
   ],
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5"

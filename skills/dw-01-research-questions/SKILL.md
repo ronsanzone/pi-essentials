@@ -1,6 +1,7 @@
 ---
 name: dw-01-research-questions
 description: "Phase 1 deep-work worker. Converts a task/ticket into objective codebase research questions while writing 00-ticket.md and 01-research-questions.md."
+disable-model-invocation: true
 ---
 
 # Phase 1: Research Questions
