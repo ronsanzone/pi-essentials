@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.78.0",
+  "lastChangelogVersion": "0.79.3",
   "defaultThinkingLevel": "low",
   "theme": "redstone-portal-dark",
   "skills": [
@@ -7,11 +7,11 @@
     "~/.claude/skills"
   ],
   "packages": [
-    "git:git@github.com:ronsanzone/pi-subagents-essentials.git@main",
     "npm:pi-mcp-adapter",
     "npm:pi-cursor-sdk",
-    "npm:@plannotator/pi-extension"
+    "npm:@plannotator/pi-extension",
+    "git:git@github.com:ronsanzone/pi-subagents-essentials.git@main"
   ],
-  "defaultProvider": "openai-codex",
+  "defaultProvider": "grove-openai",
   "defaultModel": "gpt-5.5"
 }

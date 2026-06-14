@@ -20,3 +20,13 @@ Prefer these local agents for focused context-management work:
 - `agent`: generic fresh-context task execution.
 
 References in shared Claude/Pi skills to Claude Code tools such as `TaskCreate`, `TaskUpdate`, or `TaskList` are harness examples. In Pi, use Pi-native todo/task tracking and `subagent` while preserving the described workflow.
+
+## Mermaid diagrams
+
+When writing Mermaid diagrams, prefer syntax that is valid in standard Mermaid renderers:
+
+- Quote node labels that contain punctuation, parentheses, slashes, colons, commas, angle brackets, or other special characters: `nodeId["Label with functionCall()"]`.
+- Keep node IDs simple: letters, numbers, and underscores only.
+- Avoid raw parentheses in unquoted labels, especially inside `[]`, `{}`, or `()` node shapes.
+- If a label needs code-like text, quote it or replace punctuation with plain words.
+- Before sending a diagram, quickly scan it for unquoted labels containing `(`, `)`, `<`, `>`, `{`, `}`, `[`, `]`, `:`, or `/`.

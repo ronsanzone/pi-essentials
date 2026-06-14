@@ -16,8 +16,23 @@ function fmtTokens(n: number): string {
   return `${(n / 1_000_000).toFixed(1)}m`;
 }
 
+function fmtTps(n: number): string {
+  if (!Number.isFinite(n) || n <= 0) return "0 TPS";
+  if (n < 10) return `${n.toFixed(1)} TPS`;
+  return `${Math.round(n)} TPS`;
+}
+
 function stripAnsi(s: string): string {
   return s.replace(/\x1b\[[0-9;]*m/g, "");
+}
+
+function messageTimeMs(timestamp: string | number | undefined): number | undefined {
+  if (typeof timestamp === "number" && Number.isFinite(timestamp)) return timestamp;
+  if (typeof timestamp === "string") {
+    const parsed = Date.parse(timestamp);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return undefined;
 }
 
 function centeredFooterLine(left: string, center: string, right: string, width: number): string {
@@ -48,21 +63,26 @@ export default function promptStatusFooter(pi: ExtensionAPI) {
         dispose: unsubscribeBranch,
         invalidate() {},
         render(width: number): string[] {
-          let input = 0;
-          let output = 0;
-          let cacheRead = 0;
-          let cacheWrite = 0;
           let cost = 0;
+          let latestTps: number | undefined;
+          let previousMessageTime: number | undefined;
 
           for (const entry of ctx.sessionManager.getEntries()) {
-            if (entry.type === "message" && entry.message.role === "assistant") {
+            if (entry.type !== "message") continue;
+
+            const msgTime = messageTimeMs(entry.message.timestamp) ?? messageTimeMs(entry.timestamp);
+            if (entry.message.role === "assistant") {
               const msg = entry.message as AssistantMessage;
-              input += msg.usage?.input ?? 0;
-              output += msg.usage?.output ?? 0;
-              cacheRead += msg.usage?.cacheRead ?? 0;
-              cacheWrite += msg.usage?.cacheWrite ?? 0;
               cost += msg.usage?.cost?.total ?? 0;
+
+              const output = msg.usage?.output ?? 0;
+              if (output > 0 && msgTime !== undefined && previousMessageTime !== undefined) {
+                const elapsedSeconds = (msgTime - previousMessageTime) / 1_000;
+                if (elapsedSeconds > 0) latestTps = output / elapsedSeconds;
+              }
             }
+
+            previousMessageTime = msgTime ?? previousMessageTime;
           }
 
           const cwd = compactPath(ctx.cwd);
@@ -87,9 +107,8 @@ export default function promptStatusFooter(pi: ExtensionAPI) {
           if (provider) rightParts.push(theme.fg("dim", provider));
           if (thinking) rightParts.push(theme.fg("warning", `‹ ${thinking} ›`));
           rightParts.push(theme.fg("dim", `⌘ ${fmtTokens(contextTokens)}/${fmtTokens(contextWindow)} (${contextPct}%)`));
-          if (input || output) rightParts.push(theme.fg("dim", `↑${fmtTokens(input)} ↓${fmtTokens(output)}`));
-          if (cacheRead || cacheWrite) rightParts.push(theme.fg("dim", `R${fmtTokens(cacheRead)} W${fmtTokens(cacheWrite)}`));
           if (cost) rightParts.push(theme.fg("dim", `$${cost.toFixed(3)}`));
+          if (latestTps !== undefined) rightParts.push(theme.fg("dim", fmtTps(latestTps)));
 
           const extensionStatuses = footerData.getExtensionStatuses();
           const primaryAlert = extensionStatuses.get("primary-alert");
