@@ -12,6 +12,6 @@
     "npm:@plannotator/pi-extension",
     "git:git@github.com:ronsanzone/pi-subagents-essentials.git@main"
   ],
-  "defaultProvider": "opencode-go",
-  "defaultModel": "glm-5.2"
+  "defaultProvider": "grove-openai",
+  "defaultModel": "gpt-5.5"
 }
