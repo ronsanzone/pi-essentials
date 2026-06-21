@@ -2,8 +2,8 @@
   "name": "pi-extensions",
   "private": true,
   "dependencies": {
-    "@plannotator/pi-extension": "^0.20.1",
-    "pi-cursor-sdk": "^0.1.42",
+    "@plannotator/pi-extension": "^0.21.0",
+    "pi-cursor-sdk": "^0.1.45",
     "pi-mcp-adapter": "^2.10.0"
   }
 }
