@@ -94,6 +94,8 @@ link_path "agents" "agents"
 link_path "extensions.disabled" "extensions.disabled"
 link_path "themes" "themes"
 link_path "skills" "skills"
+link_path "skills-synced" "skills-synced"
+link_path "skills-lock.json" "skills-lock.json"
 link_path "npm" "npm"
 
 # Overlay directories: other packages may add their own extension/script symlinks here.
@@ -113,18 +115,29 @@ else
   echo "skip npm install (npm unavailable)"
 fi
 
+# Verify synced skills match the committed lock (no network; catches local
+# corruption / accidental edits to skills-synced/). Run the syncer with
+# --update over the network to detect upstream drift or bump a skill.
+if command -v python3 >/dev/null 2>&1 && [[ -f "$ROOT/skills-lock.json" ]]; then
+  echo "verify synced skills against lock"
+  (cd "$ROOT" && python3 scripts/sync-skills.py --from-disk) || {
+    echo "WARN: skills-synced/ does not match skills-lock.json" >&2
+    echo "  run: python3 $ROOT/scripts/sync-skills.py --update   # to re-fetch + repin" >&2
+  }
+fi
+
 cat <<MSG
 
 pi-essentials installed.
 
 Managed links now point from:
-  $DEST/{AGENTS.md,agents,extensions.disabled,themes,skills,settings.json,npm}
+  $DEST/{AGENTS.md,agents,extensions.disabled,themes,skills,skills-synced,skills-lock.json,settings.json,npm}
 
 Overlay links are installed into:
   $DEST/{extensions,scripts}
 
 to package files under:
-  $ROOT/{agent,agents,extensions,extensions.disabled,themes,skills,npm,scripts}
+  $ROOT/{agent,agents,extensions,extensions.disabled,themes,skills,skills-synced,skills-lock.json,npm,scripts}
 
 Runtime/secrets intentionally not managed:
   auth.json, mcp-oauth/, mcp-cache.json, mcp-onboarding.json, sessions/, run-history.jsonl

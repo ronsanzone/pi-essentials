@@ -1,10 +1,10 @@
 {
-  "lastChangelogVersion": "0.79.3",
-  "defaultThinkingLevel": "low",
+  "lastChangelogVersion": "0.79.9",
+  "defaultThinkingLevel": "medium",
   "theme": "redstone-portal-dark",
   "skills": [
     "~/.pi/agent/skills",
-    "~/.claude/skills"
+    "~/.pi/agent/skills-synced"
   ],
   "packages": [
     "npm:pi-mcp-adapter",
@@ -12,6 +12,6 @@
     "npm:@plannotator/pi-extension",
     "git:git@github.com:ronsanzone/pi-subagents-essentials.git@main"
   ],
-  "defaultProvider": "grove-openai",
-  "defaultModel": "gpt-5.5"
+  "defaultProvider": "opencode-go",
+  "defaultModel": "glm-5.2"
 }

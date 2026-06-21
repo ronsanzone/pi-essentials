@@ -7,7 +7,9 @@ This repo contains source-controlled Pi assets. The repo layout is source-orient
 - `agent/AGENTS.md` -> installed as `~/.pi/agent/AGENTS.md`.
 - `agent/settings.json` -> installed as `~/.pi/agent/settings.json`.
 - `agents/` -> installed as `~/.pi/agent/agents`.
-- `skills/` -> installed as `~/.pi/agent/skills`.
+- `skills/` -> installed as `~/.pi/agent/skills` (hand-curated, ours).
+- `skills-synced/` -> installed as `~/.pi/agent/skills-synced` (upstream-synced via `skills-lock.json`).
+- `skills-lock.json` -> installed as `~/.pi/agent/skills-lock.json` (hash-pinned sync manifest).
 - `themes/` -> installed as `~/.pi/agent/themes`.
 - `extensions.disabled/` -> installed as `~/.pi/agent/extensions.disabled`.
 - `npm/` -> installed as `~/.pi/agent/npm`.
@@ -18,6 +20,7 @@ This repo contains source-controlled Pi assets. The repo layout is source-orient
 
 - Add Pi subagents as Markdown files in `agents/`.
 - Add skills as directories under `skills/<skill-name>/` with `SKILL.md` plus any helper files.
+- Sync an **upstream** skill (instead of hand-forking): add an entry to `skills-lock.json`, then run `python3 scripts/sync-skills.py --update`. The skill lands in `skills-synced/<name>/`. Do not hand-edit `skills-synced/` — it is generated. To bump, re-run `--update` and commit the new content + hash. To detect upstream drift, run `python3 scripts/sync-skills.py` (verify mode, network).
 - Add extensions as TypeScript files in `extensions/`.
 - Keep disabled extension experiments in `extensions.disabled/`.
 - Add themes in `themes/`.
