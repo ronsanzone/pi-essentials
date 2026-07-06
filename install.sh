@@ -102,6 +102,16 @@ link_path "npm" "npm"
 link_overlay_dir_files "extensions" "extensions"
 link_overlay_dir_files "scripts" "scripts"
 
+# Check optional native CLIs used by extensions. ketch-web.ts registers web_search
+# and web_scrape, but the ketch binary is installed outside this repo.
+if command -v ketch >/dev/null 2>&1; then
+  echo "ok ketch $(ketch --version 2>/dev/null || true)"
+else
+  echo "WARN: ketch CLI is not on PATH; web_search and web_scrape will fail" >&2
+  echo "  install: brew install 1broseidon/tap/ketch" >&2
+  echo "  or:      go install github.com/1broseidon/ketch@latest" >&2
+fi
+
 # Install npm dependencies into package-owned npm dir, if npm is available.
 NPM_DIR="$ROOT/npm"
 if command -v npm >/dev/null 2>&1; then

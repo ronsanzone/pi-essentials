@@ -50,8 +50,17 @@ function resultOutput(result: ExecResult): string {
 
 function assertSuccess(command: string, result: ExecResult): string {
   if (result.code === 0 && !result.killed) return result.stdout ?? "";
-  const output = resultOutput(result) || "no output";
-  throw new Error(`${command} failed${result.killed ? " (timed out)" : ""} with exit code ${result.code ?? "unknown"}:\n${output}`);
+  const output = resultOutput(result);
+  const diagnostic = output || [
+    "no output",
+    "",
+    "ketch may be missing from the pi process PATH. Install it with:",
+    "  brew install 1broseidon/tap/ketch",
+    "or:",
+    "  go install github.com/1broseidon/ketch@latest",
+    "then restart/reload pi so extensions inherit the updated PATH.",
+  ].join("\n");
+  throw new Error(`${command} failed${result.killed ? " (timed out)" : ""} with exit code ${result.code ?? "unknown"}:\n${diagnostic}`);
 }
 
 function formatSearchResults(data: unknown, backend: string, fallbackUsed: boolean): string {
