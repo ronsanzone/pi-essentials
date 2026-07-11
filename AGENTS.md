@@ -7,25 +7,23 @@ This repo contains source-controlled Pi assets. The repo layout is source-orient
 - `agent/AGENTS.md` -> installed as `~/.pi/agent/AGENTS.md`.
 - `agent/settings.json` -> installed as `~/.pi/agent/settings.json`.
 - `agents/` -> installed as `~/.pi/agent/agents`.
-- `skills/` -> installed as `~/.pi/agent/skills` (hand-curated, ours).
-- `skills-synced/` -> installed as `~/.pi/agent/skills-synced` (upstream-synced via `skills-lock.json`).
-- `skills-lock.json` -> installed as `~/.pi/agent/skills-lock.json` (hash-pinned sync manifest).
+- `skills-local/` -> installed as `~/.pi/agent/skills-local` (Pi-specific skills owned by this repo).
 - `themes/` -> installed as `~/.pi/agent/themes`.
 - `extensions.disabled/` -> installed as `~/.pi/agent/extensions.disabled`.
-- `npm/` -> installed as `~/.pi/agent/npm`.
-- `extensions/*` -> overlaid into `~/.pi/agent/extensions/*`.
-- `scripts/*` -> overlaid into `~/.pi/agent/scripts/*`.
+- `npm/` -> package metadata/reference only; Pi runtime npm state stays under the real `~/.pi/agent/npm`.
+- `extensions/*` -> installed as `~/.pi/agent/extensions/*`.
+- Shared Agent Skills installed by `npx skills` live at `~/.agents/skills` and are discovered by Pi automatically.
 
 ## Adding or changing assets
 
 - Add Pi subagents as Markdown files in `agents/`.
-- Add skills as directories under `skills/<skill-name>/` with `SKILL.md` plus any helper files.
-- Sync an **upstream** skill (instead of hand-forking): add an entry to `skills-lock.json`, then run `python3 scripts/sync-skills.py --update`. The skill lands in `skills-synced/<name>/`. Do not hand-edit `skills-synced/` — it is generated. To bump, re-run `--update` and commit the new content + hash. To detect upstream drift, run `python3 scripts/sync-skills.py` (verify mode, network).
+- Add Pi-specific skills as directories under `skills-local/<skill-name>/` with `SKILL.md` plus any helper files.
+- Install shared or upstream skills through the owning source repository's `npx skills` workflow; do not add generated links or copied third-party skills to this repository.
 - Add extensions as TypeScript files in `extensions/`.
 - Keep disabled extension experiments in `extensions.disabled/`.
 - Add themes in `themes/`.
 - Add user-level Pi settings in `agent/settings.json` only when they are non-secret and portable.
-- Add npm dependencies for extensions/tools in `npm/package.json`; let `install.sh` run `npm install`.
+- Keep Pi-managed package dependencies outside this repository under the real `~/.pi/agent/npm`.
 
 Do not commit runtime state or secrets. Keep auth, sessions, caches, OAuth data, and host-specific generated state under the real `~/.pi/agent`, not in this repo.
 
@@ -53,9 +51,11 @@ Verify representative symlinks:
 ls -l ~/.pi/agent/AGENTS.md \
       ~/.pi/agent/settings.json \
       ~/.pi/agent/agents \
-      ~/.pi/agent/skills \
       ~/.pi/agent/extensions \
-      ~/.pi/agent/npm
+      ~/.pi/agent/extensions.disabled \
+      ~/.pi/agent/skills-local \
+      ~/.pi/agent/npm \
+      ~/.agents/skills
 ```
 
 For subagent changes, start a fresh Pi session or reload packages as needed, then verify discovery:
@@ -64,4 +64,4 @@ For subagent changes, start a fresh Pi session or reload packages as needed, the
 subagent({ action: "list" })
 ```
 
-For extension or package changes, restart/reload Pi as needed and check extension startup output. If npm dependencies changed, expect `install.sh` to update `npm/package-lock.json`.
+For extension or package changes, restart/reload Pi as needed and check extension startup output. Pi-managed npm dependencies are installed under the real `~/.pi/agent/npm`; changes to this repo's `npm/package.json` are reference changes, not runtime symlink changes.

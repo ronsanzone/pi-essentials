@@ -1,18 +1,19 @@
 {
-  "lastChangelogVersion": "0.80.3",
+  "lastChangelogVersion": "0.80.6",
   "defaultThinkingLevel": "low",
   "theme": "redstone-portal-dark",
   "skills": [
-    "~/.pi/agent/skills",
-    "~/.pi/agent/skills-synced"
+    "~/.pi/agent/skills-local"
   ],
   "packages": [
     "npm:pi-mcp-adapter",
     "npm:pi-cursor-sdk",
     "npm:@plannotator/pi-extension",
-    "git:git@github.com:ronsanzone/pi-subagents-essentials.git@main",
-    "npm:sideshow"
+    "npm:sideshow",
+    "~/.pi/agent/private-packages/mongo-pi-extensions"
   ],
   "defaultProvider": "grove-openai",
-  "defaultModel": "gpt-5.5"
+  "defaultModel": "gpt-5.5",
+  "defaultProjectTrust": "always",
+  "showCacheMissNotices": true
 }

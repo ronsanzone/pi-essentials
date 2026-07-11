@@ -15,20 +15,27 @@ export function getAgentDir(): string {
 
 export function getSkillRoots(cwd: string): SkillRoot[] {
   const resolvedCwd = resolve(cwd);
+  const userLocalRoot = join(getAgentDir(), "skills-local");
+  const userSharedRoot = join(homedir(), ".agents", "skills");
+  const projectRoot = resolve(resolvedCwd, ".pi", "skills");
+  const projectLegacyRoot = resolve(resolvedCwd, ".agents", "skills");
   const roots: SkillRoot[] = [
     {
-      path: join(getAgentDir(), "skills"),
-      source: { kind: "user", root: join(getAgentDir(), "skills") },
+      path: userLocalRoot,
+      source: { kind: "user-local", root: userLocalRoot },
     },
     {
-      path: resolve(resolvedCwd, ".pi", "skills"),
-      source: { kind: "project", root: resolve(resolvedCwd, ".pi", "skills") },
+      path: userSharedRoot,
+      source: { kind: "user-shared", root: userSharedRoot },
     },
-    // Pi's current loader focuses on .pi/skills, but README-era installs may still
-    // have .agents/skills. Include it as a local editable convenience.
     {
-      path: resolve(resolvedCwd, ".agents", "skills"),
-      source: { kind: "project-legacy", root: resolve(resolvedCwd, ".agents", "skills") },
+      path: projectRoot,
+      source: { kind: "project", root: projectRoot },
+    },
+    // Project-level Agent Skills installed by older harnesses.
+    {
+      path: projectLegacyRoot,
+      source: { kind: "project-legacy", root: projectLegacyRoot },
     },
   ];
 

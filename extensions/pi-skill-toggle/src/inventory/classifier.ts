@@ -7,8 +7,10 @@ export function classifyInvocationMode(doc: FrontmatterDocument): SkillInvocatio
 
 export function formatSourceKind(kind: string): string {
   switch (kind) {
-    case "user":
-      return "User";
+    case "user-local":
+      return "Pi local";
+    case "user-shared":
+      return "Shared user";
     case "project":
       return "Project";
     case "project-legacy":

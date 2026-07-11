@@ -1,7 +1,8 @@
 export type SkillInvocationMode = "agent-invocable" | "manual-only";
 
 export type SkillSource =
-  | { kind: "user"; root: string }
+  | { kind: "user-local"; root: string }
+  | { kind: "user-shared"; root: string }
   | { kind: "project"; root: string }
   | { kind: "project-legacy"; root: string }
   | { kind: "unknown"; root: string };
