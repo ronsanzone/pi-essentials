@@ -8,7 +8,6 @@
     "npm:pi-mcp-adapter",
     "npm:pi-cursor-sdk",
     "npm:@plannotator/pi-extension",
-    "npm:sideshow",
     "~/.pi/agent/private-packages/mongo-pi-extensions"
   ],
   "showCacheMissNotices": true,
